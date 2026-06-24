@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  tasks:
+    
+    - name: Configure a registry container
+      community.docker.docker_container:
+        name: mio_registro
+        image: registry:2
+        restart_policy: always
+        ports:
+          - 5000:5000
+        
+   
