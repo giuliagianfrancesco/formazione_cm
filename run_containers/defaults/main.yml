@@ -1,0 +1,11 @@
+---
+container_defaults:
+  rocky:
+    ssh_host_port: 2201
+    ip: 172.20.0.7
+  ubuntu:
+    ssh_host_port: 2202
+    ip: 172.20.0.6
+
+docker_network_name: rete_docker
+podman_network_name: rete_podman

@@ -1,0 +1,53 @@
+- name: Crea cartella per Dockerfile 
+  ansible.builtin.file:
+    path: /tmp/{{ so_item }}
+    state: directory
+    mode: '0755' 
+
+
+- name: Creare chiavi ssh
+  community.crypto.openssh_keypair:
+    path: /tmp/{{ so_item  }}/id_key_genericuser
+    size: 4096
+    type: rsa
+
+
+- name: Crea rete docker
+  community.docker.docker_network:
+    name: rete_docker
+    ipam_config:
+      - subnet: 172.20.0.0/24
+  when: docker_installed 
+  run_once: true
+
+- name: Crea rete podman
+  containers.podman.podman_network:
+    name: rete_podman
+    ipam_config:
+      - subnet: 172.20.0.0/24
+  when: podman_installed and not docker_installed 
+  run_once: true
+
+
+
+- name: Copia Dockerfile 
+  ansible.builtin.template:
+    src: Dockerfile.{{ so_item }}.j2
+    dest: /tmp/{{ so_item }}/Dockerfile
+     
+
+- name: Build container (Docker)
+  community.docker.docker_image:
+    build:
+      path: "/tmp/{{ so_item }}/"
+    name: "immagine_dockerfile_{{ so_item }}"
+    source: build
+  when: docker_installed 
+  
+
+- name: Build container (Podman)
+  containers.podman.podman_image:
+    name: "immagine_dockerfile_{{ so_item }}"
+    path: "/tmp/{{ so_item }}/"
+    build: true
+  when: podman_installed and not docker_installed

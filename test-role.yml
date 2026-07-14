@@ -1,0 +1,33 @@
+---
+- name: Test my role
+  hosts: localhost
+  vars: 
+    so: 
+      - rocky
+      - ubuntu
+  vars_files:
+    - /etc/ansible/vault_pass.yml
+  tasks:
+    - name: registry
+      ansible.builtin.include_role:
+        name: registry
+    
+    - name: build_images
+      ansible.builtin.include_role:
+        name: build_images
+      loop: "{{ so }}"
+      loop_control:
+        loop_var: so_item 
+
+    - name: push_build
+      ansible.builtin.include_role:
+        name: push_builds 
+      loop: "{{ so }}"
+      loop_control:
+        loop_var: so_item
+    - name: run cont    
+      ansible.builtin.include_role:
+        name: run_containers
+      loop: "{{ so }}"
+      loop_control:
+        loop_var: so_item               

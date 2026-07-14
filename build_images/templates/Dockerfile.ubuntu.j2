@@ -1,0 +1,31 @@
+FROM ubuntu:latest
+
+WORKDIR /
+
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+
+    openssh-server \
+    docker.io    
+RUN useradd -m genericuser && \
+    echo "genericuser:{{ password }}" | chpasswd && \
+    mkdir /home/genericuser/.ssh && \
+    chown genericuser:genericuser /home/genericuser/.ssh && \
+    chmod 700 /home/genericuser/.ssh && \
+    touch /home/genericuser/.ssh/authorized_keys && \
+    chown genericuser:genericuser /home/genericuser/.ssh/authorized_keys && \
+    chmod 600 /home/genericuser/.ssh/authorized_keys
+
+COPY id_key_genericuser.pub /home/genericuser/.ssh/authorized_keys
+
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication no/PasswordAuthentication no/' /etc/ssh/sshd_config && \
+    sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config    && \
+    echo 'AllowUsers genericuser' >> /etc/ssh/sshd_config
+
+EXPOSE 22 
+# -D : When this option is specified,
+# sshd will not detach and does not become a  daemon.
+# This allows easy monitoring of sshd.
+CMD ["/usr/sbin/sshd","-D"]

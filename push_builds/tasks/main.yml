@@ -1,0 +1,22 @@
+---
+- name: Push image
+  community.docker.docker_image:
+    name: immagine_dockerfile_{{ so_item }}
+    repository: localhost:5000/immagine_dockerfile_{{ so_item }}:latest
+    tag: latest
+    push: true
+    source: local
+  when: docker_installed 
+
+- name: Tag image podman
+  containers.podman.podman_tag:
+    image: "immagine_dockerfile_{{ so_item }}"
+    target_names:
+      - localhost:5000/immagine_dockerfile_{{ so_item }}:latest
+  when: podman_installed and not docker_installed 
+
+- name: Push image
+  containers.podman.podman_image:
+    name: "localhost:5000/immagine_dockerfile_{{ so_item }}:latest"
+    push: true
+  when: podman_installed and not docker_installed

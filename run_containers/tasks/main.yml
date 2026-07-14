@@ -1,0 +1,23 @@
+---
+
+- name: Run container Docker
+  community.docker.docker_container:
+    name: "mio_{{ so_item }}"
+    image: "localhost:5000/immagine_dockerfile_{{ so_item }}:latest"
+    networks:
+      - name: rete_docker
+        ipv4_address: "{{ container_defaults[so_item].ip }}"
+    ports:
+      - "{{ container_defaults[so_item].ssh_host_port }}:22"
+    state: started
+    restart_policy: always
+  when: docker_installed 
+
+- name: Run container Podman 
+  containers.podman.podman_container:
+    name: "mio_{{ so_item }}"
+    image: "localhost:5000/immagine_dockerfile_{{ so_item }}:latest"
+    ports:
+      - "{{ container_defaults[so_item].ssh_host_port }}:22"
+    state: started
+  when: podman_installed and not docker_installed
