@@ -104,4 +104,3 @@ vars_files:
 **Keyword:**
 - Con `ansible.cfg` configurato, il flag --ask-vault-pass non serve per eseguire playbook test-role.yml
 
-
