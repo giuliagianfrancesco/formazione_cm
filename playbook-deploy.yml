@@ -1,0 +1,17 @@
+---
+- name: deploy 
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:    
+    - name: deploy
+      community.docker.docker_container:
+        name: deploy
+        image: localhost:5000/immagine_dockerfile_ubuntu:latest
+        user: root
+        docker_host: "unix:///Users/giuliagianfrancesco/.colima/default/docker.sock"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+        ports:
+          - "2203:22"    

@@ -1,0 +1,12 @@
+---
+- name: Immagine da deployare 
+  hosts: deploy
+  gather_facts: false
+
+  tasks:  
+    - name: deploy 
+      community.docker.docker_container:
+        name: imm_deployata
+        image: localhost:5000/immagine_dockerfile_ubuntu:latest
+        user: root
+

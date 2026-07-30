@@ -1,0 +1,18 @@
+---
+- name: Jenkins container
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:    
+    - name: Container Jenkins
+      community.docker.docker_container:
+        name: jenkins_cont
+        image: jenkins/jenkins:lts
+        user: root
+        docker_host: "unix:///Users/giuliagianfrancesco/.colima/default/docker.sock"
+        ports: 
+          - 8080:8080
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock 
+          - jenkins_home:/var/jenkins_home                                                                                                             
