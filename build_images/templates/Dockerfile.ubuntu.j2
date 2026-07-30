@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
 
     openssh-server \
     docker.io    
-RUN systemctl enable docker && systemctl start docker
+
 RUN useradd -m genericuser && \
     echo "genericuser:{{ password }}" | chpasswd && \
     mkdir /home/genericuser/.ssh && \
